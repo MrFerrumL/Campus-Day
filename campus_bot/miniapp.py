@@ -174,11 +174,14 @@ class App:
         return health.report(self.config.data_dir/'bot.sqlite3', latency=latency)
 
     async def state(self,store,first,last):
-        schedule = Schedule(store,self.config,cache_first=True,retry_after=self.retry_after)
+        schedule = Schedule(store,self.config,cache_first=True,retry_after=self.retry_after,parallel_weeks=True)
+        monday = first - timedelta(days=first.weekday())
+        mondays = [monday + timedelta(weeks=i) for i in range((last - monday).days // 7 + 1)]
+        weeks = dict(zip(mondays, await asyncio.gather(*(schedule.university(day) for day in mondays))))
         events,notes = {},[]
         day = first
         while day <= last:
-            rows,note,_ = await schedule.day(day)
+            rows,note,_ = await schedule.day(day, week=weeks[day - timedelta(days=day.weekday())])
             if note and note not in notes:
                 notes.append(note)
             for e in rows:

@@ -47,8 +47,8 @@ def request_json(url, payload=None, timeout=15, service="Источник", open
         raise ServiceError(service) from None
 
 
-async def get_json(url, service="Источник"):
-    return await asyncio.to_thread(request_json, url, service=service)
+async def get_json(url, service="Источник", *, timeout=15):
+    return await asyncio.to_thread(request_json, url, service=service, timeout=timeout)
 
 
 TELEGRAM_HOST = "api.telegram.org"

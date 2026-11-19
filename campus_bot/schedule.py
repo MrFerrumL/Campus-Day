@@ -108,18 +108,26 @@ STALE_AFTER = timedelta(hours=1)
 
 
 class Schedule:
-    def __init__(self, store, config, fetch=get_json, cache_first=False, retry_after=None):
-        self.store, self.config, self.fetch = store, config, fetch
+    def __init__(self, store, config, fetch=None, cache_first=False, retry_after=None, *, parallel_weeks=False):
+        self.store, self.config = store, config
+        self.fetch = fetch or (self.fetch_for_app if cache_first else get_json)
         doc = json.loads(config.lessons_path.read_text(encoding="utf-8"))
         self.anchor = date.fromisoformat(doc["cycle_anchor"])
         if self.anchor.weekday() != 0:
             raise ValueError("Начало двухнедельного цикла должно быть понедельником")
         store.seed_rules(doc)
         self.lock = asyncio.Lock()
+        self.week_locks = {} if parallel_weeks else None
         self.cache_first = cache_first
         # Shared by the Mini App's per-request instances, so a website outage is
         # retried every five minutes instead of on every request.
         self.retry_after = {} if retry_after is None else retry_after
+
+    @staticmethod
+    async def fetch_for_app(url, service):
+        # Use the socket deadline so asyncio.run does not wait for a timed-out
+        # executor thread after the HTTP handler has prepared its response.
+        return await get_json(url, service, timeout=3)
 
     def fresh(self, cached, now, force):
         if not cached or force:
@@ -163,7 +171,8 @@ class Schedule:
         cached = self.store.cache_get(key)
         if self.fresh(cached, now, force):
             return parse_university(cached[0],self.config.timezone,group_id),self.stale_note(cached, now),False
-        async with self.lock:
+        lock = self.lock if self.week_locks is None else self.week_locks.setdefault(key, asyncio.Lock())
+        async with lock:
             cached = self.store.cache_get(key)
             if self.fresh(cached, now, force):
                 return parse_university(cached[0], self.config.timezone, group_id), self.stale_note(cached, now), False
@@ -187,8 +196,8 @@ class Schedule:
                 self.retry_after[key] = now + timedelta(minutes=5)
                 return self.fallback(cached, group_id)
 
-    async def day(self, day: date, force=False):
-        university, note, changed = await self.university(day, force)
+    async def day(self, day: date, force=False, *, week=None):
+        university, note, changed = week if week is not None else await self.university(day, force)
         result = [e for e in university if e.start.date() == day]
         for extra in extra_university_events(self.store.get('university_extras', []), day,
                                              self.config.timezone, self.store.get('group_id')):

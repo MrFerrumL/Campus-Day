@@ -1,5 +1,5 @@
 // Entry point: draws the shell, wires navigation and keeps the data fresh.
-import { api, applyTheme, bindSheet, inTelegram, load, on, render, setRenderer, sheetIsOpen, state, switchTab, tg, toast } from './core.js';
+import { api, applyTheme, bindSheet, inTelegram, load, on, render, setRenderer, sheetIsOpen, state, switchTab, tg, toast, useTelegramSdk } from './core.js';
 import { openAddChooser, openEditor } from './editor.js';
 import { brandMark, icon } from './icons.js';
 import { $, esc } from './util.js';
@@ -40,9 +40,9 @@ function draw() {
     if (button.dataset.tab === state.tab) button.setAttribute('aria-current', 'page');
     else button.removeAttribute('aria-current');
   }
-  if (!inTelegram && state.error && !state.data) {
+  if (state.error && !state.data) {
     $('#fab').hidden = true;
-    $('#view').innerHTML = signInHelp();
+    $('#view').innerHTML = state.authError && !inTelegram ? signInHelp() : loadError();
     return;
   }
   const status = state.status && state.tab !== 'students'
@@ -76,6 +76,13 @@ function signInHelp() {
     <p class="muted small-text section">В Telegram приложение открывается кнопкой «Календарь» без всякого входа.</p>`;
 }
 
+function loadError() {
+  const title = state.authError ? 'Нужно снова открыть календарь' : 'Календарь пока недоступен';
+  const hint = state.authError ? '<p>Закройте это окно и снова нажмите «Календарь» в чате с ботом.</p>' : '';
+  return `<div class="page-head"><h1>${title}</h1><p>${esc(state.status)}</p></div>
+    ${hint}<button type="button" class="btn primary" data-action="refresh" ${state.loading ? 'disabled' : ''}>${state.loading ? 'Загрузка…' : 'Повторить'}</button>`;
+}
+
 /** A one-time link from /web: drop the token from the address bar first, then exchange it. */
 async function redeemLink() {
   const match = location.hash.match(/(?:^#|&)login=([\w-]{20,100})/);
@@ -91,7 +98,12 @@ async function redeemLink() {
 }
 
 on('click', 'tab', (button) => { if(button.dataset.tab==='more')loadAssistant(); return switchTab(button.dataset.tab); });
-function refreshCurrent() { return state.tab === 'students' ? students.loadBilling() : state.tab === 'gym' ? gym.loadWellness() : load(); }
+async function refreshCurrent() {
+  if (!state.data) await load();
+  else if (state.tab === 'students') await students.loadBilling();
+  else if (state.tab === 'gym') await gym.loadWellness();
+  else await load();
+}
 on('click', 'refresh', refreshCurrent);
 on('click', 'fab', () => {
   const kinds = FAB[state.tab];
@@ -105,7 +117,7 @@ function resume() {
   if (document.visibilityState === 'hidden') return;
   clearTimeout(resumeTimer);
   resumeTimer = setTimeout(() => {
-    if (sheetIsOpen() || document.activeElement?.matches('input, textarea, select')) return;
+    if (state.loading || sheetIsOpen() || document.activeElement?.matches('input, textarea, select')) return;
     refreshCurrent();
   }, 300);
 }
@@ -113,10 +125,21 @@ function resume() {
 function start() {
   const params=new URLSearchParams(location.search);
   if(params.get('tab')==='gym'){state.tab='gym';gym.setSection(params.get('section'))}
-  tg?.ready();
-  tg?.expand();
-  applyTheme();
-  tg?.onEvent?.('themeChanged', applyTheme);
+  function connectTelegram() {
+    useTelegramSdk();
+    tg?.ready?.();
+    tg?.expand?.();
+    tg?.onEvent?.('themeChanged', applyTheme);
+    tg?.onEvent?.('activated', resume);
+    applyTheme();
+  }
+  window.addEventListener('campus-telegram-sdk', () => {
+    const recover = state.authError;
+    connectTelegram();
+    if (recover) refreshCurrent();
+  }, { once: true });
+  connectTelegram();
+  if (inTelegram) window.campusTelegram.ready();
   window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change', applyTheme);
   shell();
   bindSheet();
@@ -129,7 +152,7 @@ function start() {
     if (state.tab === 'today' && state.data && !sheetIsOpen() && !document.activeElement?.matches('input, textarea, select')) render();
   }, 60000);
   window.addEventListener('online', resume);
-  tg?.onEvent?.('activated', resume);
+  window.addEventListener('focus', resume);
   render();
   // The assistant status also shows the chat button in the top bar.
 redeemLink().then(async()=>{await load();loadAssistant();if(state.tab==='gym')gym.loadWellness()});

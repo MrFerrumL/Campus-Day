@@ -2,9 +2,13 @@
 // Telegram integration, loading, toasts, the bottom sheet and event dispatch.
 import { $, iso, mondayOf, plus, today } from './util.js';
 
-export const tg = window.Telegram?.WebApp ?? null;
-/** Opened from the bot inside Telegram (signed init data), not in an ordinary browser. */
-export const inTelegram = !!tg?.initData;
+export let tg = null;
+export let inTelegram = window.campusTelegram.embedded();
+export function useTelegramSdk() {
+  tg = window.Telegram?.WebApp ?? null;
+  inTelegram = window.campusTelegram.embedded();
+}
+useTelegramSdk();
 
 export const state = {
   tab: 'today',
@@ -17,6 +21,7 @@ export const state = {
   loadedRange: '',
   status: '',
   error: false,
+  authError: false,
   loading: false,
   billing: null,
   billingMonth: iso(today()).slice(0, 7),
@@ -25,7 +30,7 @@ export const state = {
   billingStatus: '',
 };
 
-export const api = window.createCampusTransport({ initData: () => tg?.initData || '' });
+export const api = window.createCampusTransport({ initData: window.campusTelegram.initData });
 
 /* ---------- Event dispatch: elements carry data-action / data-change / data-submit ---------- */
 const handlers = { click: {}, change: {}, submit: {}, input: {} };
@@ -87,10 +92,12 @@ export async function load() {
     state.loadedRange = rangeKey(range);
     state.status = (result.notes || []).join(' ');
     state.error = false;
+    state.authError = false;
   } catch (error) {
     if (id !== requestId) return;
     state.status = error.message;
     state.error = true;
+    state.authError = error.status === 403;
   } finally {
     if (id === requestId) { state.loading = false; render(); }
   }
