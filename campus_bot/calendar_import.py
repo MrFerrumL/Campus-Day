@@ -48,7 +48,7 @@ def feed_url(value):
         match = re.fullmatch(r"/calendar/ical/([^/]+)/(public|private-[A-Za-z0-9_-]+)/(basic|full)\.ics", path)
         if match:
             calendar_id = unquote(match[1])
-            if calendar_id not in (".", "..") and re.fullmatch(r"[A-Za-z0-9_.@+\-]+", calendar_id):
+            if calendar_id not in (".", "..") and re.fullmatch(r"[A-Za-z0-9_.@+#\-]+", calendar_id):
                 return f"https://{GOOGLE}/calendar/ical/{quote(calendar_id, safe='')}/{match[2]}/basic.ics"
     if APPLE.fullmatch(host) and url.scheme in ("https", "webcal"):
         if re.fullmatch(r"/published/2/[A-Za-z0-9_=-]+", path):

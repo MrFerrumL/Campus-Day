@@ -41,6 +41,10 @@ END:VCALENDAR
                          "https://p34-caldav.icloud.com/published/2/sample")
         self.assertEqual(feed_url("https://calendar.google.com/calendar/ical/demo%40gmail.com/private-sample/basic.ics"),
                          "https://calendar.google.com/calendar/ical/demo%40gmail.com/private-sample/basic.ics")
+        self.assertEqual(
+            feed_url("https://calendar.google.com/calendar/ical/test%23holiday%40group.v.calendar.google.com/public/basic.ics"),
+            "https://calendar.google.com/calendar/ical/test%23holiday%40group.v.calendar.google.com/public/basic.ics",
+        )
         for invalid in (
             "https://calendar.google.com.evil.test/calendar/ical/demo/public/basic.ics",
             "https://other@calendar.google.com/calendar/ical/demo/public/basic.ics",
