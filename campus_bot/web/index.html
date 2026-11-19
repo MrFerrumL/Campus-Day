@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#1a3a8f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="день">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<title>день — личный календарь</title>
+<link rel="stylesheet" href="./css/tokens.css">
+<link rel="stylesheet" href="./css/app.css">
+<link rel="stylesheet" href="./css/wellness.css">
+<link rel="stylesheet" href="./css/fitness.css">
+<script src="./js/boot.js"></script>
+<script src="./transport.js"></script>
+<script type="module" src="./js/main.js"></script>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a class="brand" id="brand" href="./" aria-label="день — на главную">день</a>
+    <span class="chip-static" id="group" hidden></span>
+    <button type="button" class="icon-btn" id="ai-open" data-action="ai-open" aria-label="ИИ-помощник" hidden></button>
+    <button type="button" class="icon-btn" id="refresh" data-action="refresh" aria-label="Обновить"></button>
+  </header>
+  <nav class="nav" id="nav" aria-label="Разделы"></nav>
+  <main id="view" tabindex="-1"></main>
+</div>
+<button type="button" class="fab" id="fab" data-action="fab" aria-label="Добавить" hidden></button>
+<dialog class="sheet" id="sheet" aria-label="Редактирование"><div class="sheet-inner"><div class="sheet-handle" aria-hidden="true"></div><div id="sheet-body"></div></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<noscript>Для работы приложения нужен JavaScript.</noscript>
+</body>
+</html>

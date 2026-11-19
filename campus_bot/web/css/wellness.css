@@ -1,0 +1,21 @@
+.nav{grid-template-columns:repeat(6,minmax(0,1fr))}.nav button{font-size:11px}.nav button .pill{width:44px}
+.wellness-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 14px 0; }
+.wellness-tabs .chip { min-width: 0; justify-content: center; padding-inline: 4px; text-align: center; }
+.wellness-hero { background: var(--accent-soft); padding: 20px; }
+.wellness-hero h2 { font-size: 23px; margin: 0; }
+.wellness-hero p { color: var(--muted); margin: 8px 0 16px; max-width: 32ch; }
+.nutrition-overview .section-head { margin: 0; }
+.nutrition-overview .macro-strip { margin: 0; }
+.water-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+@media (min-width: 430px) { .water-controls { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.wellness-stats .stat b{font-size:24px;overflow-wrap:anywhere}.wellness-stats .stat span{font-size:12px}
+.gym-program h3,.template-grid h3{margin:6px 0 8px}.program-day{display:flex;align-items:center;gap:8px;padding:12px 0;border-top:1px solid var(--line)}
+
+.workout-exercise{display:flex;align-items:center;gap:10px;border-top:1px solid var(--line);padding:12px 0}.workout-exercise strong{font-size:14px}.rest-timer{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:14px 0}.rest-timer>span{flex:1;font-variant-numeric:tabular-nums;font-size:14px}
+.wellness-date{display:flex;align-items:center;gap:8px}.wellness-date input{flex:1;min-width:0;min-height:42px;border:1px solid var(--line);border-radius:12px;padding:8px;background:var(--surface)}.macro-strip{display:flex;justify-content:space-around;margin-top:14px;font-size:13px;color:var(--muted)}.journal-row{display:flex;align-items:center;gap:8px;padding:12px 14px}
+.sleep-bars{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;height:155px;margin-top:16px}.sleep-bars>div{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;height:100%;min-height:0}.sleep-bars b{font-size:12px;font-weight:600}.sleep-bars span{display:block;width:100%;max-width:24px;min-height:2px;border-radius:6px 6px 0 0;background:var(--uni)}.sleep-bars small{font-size:11px;color:var(--muted)}
+.set-table{margin:10px 0 18px}.set-row{display:grid;grid-template-columns:24px 1fr 1fr 50px;gap:10px;align-items:center;margin:10px 0}.set-row input:not([type=checkbox]){width:100%;min-width:0;min-height:44px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);padding:8px}.set-row input[type=checkbox]{width:24px;height:24px;accent-color:var(--accent);justify-self:center}.set-head{font-size:12px;color:var(--muted)}
+.program-editor-day{border:1px solid var(--line);border-radius:14px;margin:18px 0;padding:12px;min-width:0}.program-editor-day legend{font-weight:650;padding:0 8px}.program-entry{border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:12px}.program-entry .form-row{gap:8px}.program-entry .form-row .field{min-width:0}.exercise-tips{padding-left:20px;color:var(--muted);line-height:1.7}
+.ai-messages{display:flex;flex-direction:column;gap:10px}.ai-bubble{background:var(--surface-2);border-radius:16px;padding:13px 15px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}.ai-bubble.user{background:var(--accent-soft);margin-left:24px}.ai-status{font-size:12px;color:var(--muted)}.ai-form{display:flex;gap:8px;align-items:flex-end}.ai-form textarea{flex:1;min-width:0;min-height:76px;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--surface);resize:vertical}.ai-form button{flex:none}.ai-examples{display:flex;gap:6px;flex-wrap:wrap}.ai-examples button{font-size:12px;text-align:left;padding:9px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+
+@media(min-width:900px){.nav{grid-template-columns:1fr}.nav button{font-size:15px}.nav button .pill{width:36px}}

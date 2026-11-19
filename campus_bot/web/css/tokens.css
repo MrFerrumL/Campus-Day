@@ -1,0 +1,60 @@
+/* Design tokens. Light by default; dark follows Telegram's colour scheme
+   (data-theme on <html>) or, outside Telegram, the system setting. */
+:root {
+  color-scheme: light;
+  --bg: #f3f5ef;
+  --surface: #ffffff;
+  --surface-2: #eaeee4;
+  --surface-3: #dfe5d8;
+  --ink: #15231b;
+  --muted: #536158;
+  --line: #dce2d6;
+  --accent: #2b6a4c;
+  --accent-ink: #ffffff;
+  --accent-soft: #dbeadf;
+  --focus: #6f9f84;
+
+  --uni: #5546c0;        --uni-soft: #ebe8fa;
+  --lesson: #0e6a7b;     --lesson-soft: #d9eef1;
+  --plan: #875006;       --plan-soft: #f6e9d3;
+  --hack: #a53915;       --hack-soft: #f8e1d7;
+  --danger: #b2271b;     --danger-soft: #fce6e2;
+  --ok: #1d774a;         --ok-soft: #dcf0e4;
+
+  --shadow: 0 1px 2px rgba(21, 35, 27, .05), 0 8px 24px rgba(21, 35, 27, .07);
+  --shadow-up: 0 -1px 0 rgba(21, 35, 27, .06), 0 -8px 24px rgba(21, 35, 27, .06);
+  --nav-bg: rgba(255, 255, 255, .92);
+
+  --radius: 20px;
+  --radius-m: 14px;
+  --radius-s: 10px;
+  --nav-h: 64px;
+  --gutter: 16px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0e1411;
+  --surface: #161e19;
+  --surface-2: #1e2822;
+  --surface-3: #27332c;
+  --ink: #e6ece6;
+  --muted: #a1aea5;
+  --line: #2a352e;
+  --accent: #7fd0a5;
+  --accent-ink: #0b130f;
+  --accent-soft: #1d3a2b;
+  --focus: #7fd0a5;
+
+  --uni: #aea3f6;        --uni-soft: #29244d;
+  --lesson: #74cfdf;     --lesson-soft: #143439;
+  --plan: #f0b95f;       --plan-soft: #392b12;
+  --hack: #f39069;       --hack-soft: #3e2219;
+  --danger: #ff8c7e;     --danger-soft: #3d1c18;
+  --ok: #7fd0a5;         --ok-soft: #173326;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, .35);
+  --shadow-up: 0 -1px 0 rgba(255, 255, 255, .04);
+  --nav-bg: rgba(22, 30, 25, .94);
+}
